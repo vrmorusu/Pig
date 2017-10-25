@@ -1,0 +1,289 @@
+1. Total number of tweets in this file
+dataIn = LOAD '/home/cloudera/Downloads/TweetsAll.txt' AS (line:chararray) ;
+dataTokens = foreach dataIn generate flatten( STRSPLIT(line,'[|-|]')) AS (userName:chararray, hipen1:chararray, lang:chararray, hipen2:chararray, loc:chararray, hipen3:chararray, date:chararray, hipen4:chararray, textContent:chararray, hipen5:chararray, nulltermination:chararray);
+dataCount = Group dataTokens ALL;
+result = foreach dataCount generate COUNT(dataTokens);
+dump result;
+
+Result:
+(103046)
+
+
+2. Total number of tweets per year
+dataIn = LOAD '/home/cloudera/Downloads/TweetsAll.txt' AS (line:chararray) ;
+dataTokens = foreach dataIn generate flatten( STRSPLIT(line,'[|-|]')) AS (userName:chararray, hipen1:chararray, lang:chararray, hipen2:chararray, loc:chararray, hipen3:chararray, date:chararray, hipen4:chararray, textContent:chararray, hipen5:chararray, nulltermination:chararray);
+dateGroup = foreach dataTokens generate date;
+dateToken = foreach dateGroup generate flatten(STRSPLIT(date, '[ ]')) AS (week:chararray, month:chararray, day:chararray, time:chararray, timezone:chararray, year:chararray);
+yearGroup = GROUP dateToken by year;
+yearCount = foreach yearGroup generate group as year, COUNT(dateToken);
+dump yearCount;
+(2013,102519)
+(,490)
+
+3. Total number of tweets per month
+dataIn = LOAD '/home/cloudera/Downloads/TweetsAll.txt' AS (line:chararray) ;
+dataTokens = foreach dataIn generate flatten( STRSPLIT(line,'[|-|]')) AS (userName:chararray, hipen1:chararray, lang:chararray, hipen2:chararray, loc:chararray, hipen3:chararray, date:chararray, hipen4:chararray, textContent:chararray, hipen5:chararray, nulltermination:chararray);
+dateGroup = foreach dataTokens generate date;
+dateToken = foreach dateGroup generate flatten(STRSPLIT(date, '[ ]')) AS (week:chararray, month:chararray, day:chararray, time:chararray, timezone:chararray, year:chararray);
+monthGroup = GROUP dateToken by month;
+monthCount = foreach monthGroup generate group as month, COUNT(dateToken) as cnt;
+result = foreach monthCount generate month,cnt;
+dump result;
+
+Result:
+(7,5)
+(La,1)
+(Apr,102519)
+(Los,1)
+(SW6,2)
+(TTC,1)
+(U.K,1)
+(las,1)
+(#ABS,6)
+(Hong,1)
+(LOVE,1)
+(Oman,2)
+(Solo,3)
+(palu,2)
+(.L.A.,7)
+(90025,1)
+(Wales,3)
+(Brasil,2)
+(Dungun,1)
+(Google,1)
+(Heerde,2)
+(Kuwait,1)
+(London,2)
+(Malang,4)
+(mundo.,2)
+(Chelsea,1)
+(Germany,3)
+(Pachino,1)
+(15\12\12,1)
+(Malaysia,1)
+(Uxbridge,1)
+(8�00�,9)
+(BERKABUT~,1)
+(INDONESIA,2)
+(Indonesia,5)
+(Tangerang,1)
+(pontianak,1)
+(YOGYAKARTA,1)
+(???????????,1)
+(longitude=-84.49152044},1)
+(,407)
+
+
+4. Total number of tweets per day of the week
+dataIn = LOAD '/home/cloudera/Downloads/TweetsAll.txt' AS (line:chararray) ;
+dataTokens = foreach dataIn generate flatten( STRSPLIT(line,'[|-|]')) AS (userName:chararray, hipen1:chararray, lang:chararray, hipen2:chararray, loc:chararray, hipen3:chararray, date:chararray, hipen4:chararray, textContent:chararray, hipen5:chararray, nulltermination:chararray);
+dateGroup = foreach dataTokens generate date;
+dateToken = foreach dateGroup generate flatten(STRSPLIT(date, '[ ]')) AS (week:chararray, month:chararray, day:chararray, time:chararray, timezone:chararray, year:chararray);
+weekGroup = GROUP dateToken by week;
+weekCount = foreach weekGroup generate flatten(group) as week, COUNT(dateToken) as cnt;
+result = foreach weekCount generate week,cnt;
+dump result;
+
+Result:
+(,86)
+(*,1)
+(-,327)
+(_,1)
+(~,9)
+(--,7)
+(El,2)
+(954,1)
+(ONE,1)
+(Wed,102519)							<=== 
+(null,31)
+(Mksar,1)
+(~GITA,1)
+(Rembau,3)
+(ANFIELD,1)
+(Gg_Akrab,3)
+(DREAMLAND,1)
+(Damansara,5)
+(Indonesia,7)
+(Woodlands,SP�,1)
+(GeoLocation{latitude=34.02289825,,1)
+(,0)
+
+
+
+5. Total number of tweets per day of the month
+dataIn = LOAD '/home/cloudera/Downloads/TweetsAll.txt' AS (line:chararray) ;
+dataTokens = foreach dataIn generate flatten( STRSPLIT(line,'[|-|]')) AS (userName:chararray, hipen1:chararray, lang:chararray, hipen2:chararray, loc:chararray, hipen3:chararray, date:chararray, hipen4:chararray, textContent:chararray, hipen5:chararray, nulltermination:chararray);
+dateGroup = foreach dataTokens generate date;
+dateToken = foreach dateGroup generate flatten(STRSPLIT(date, '[ ]')) AS (week:chararray, month:chararray, day:chararray, time:chararray, timezone:chararray, year:chararray);
+dayGroup = GROUP dateToken by day;
+dayCount = foreach dayGroup generate group as day, COUNT(dateToken) as cnt;
+result = foreach dayCount generate day,cnt;
+dump result;
+
+Result: 
+(10,102519)
+(:*,5)
+(FC,1)
+(LS,9)
+(up,1)
+(City,1)
+(Kong,1)
+((USA),7)
+(Curva,1)
+(coret,1)
+(vegas,1)
+(Angeles,1)
+(Airspace,1)
+(,460)
+
+6. Total tweets in each language used (you need to filter the tweets that do not have a value for the language)
+dataIn = LOAD '/home/cloudera/Downloads/TweetsAll.txt' AS (line:chararray) ;
+dataTokens = foreach dataIn generate flatten( STRSPLIT(line,'[|-|]')) AS (userName:chararray, hipen1:chararray, lang:chararray, hipen2:chararray, loc:chararray, hipen3:chararray, date:chararray, hipen4:chararray, textContent:chararray, hipen5:chararray, nulltermination:chararray);
+dataCount = Group dataTokens by lang;
+result = foreach dataCount generate group as lang, COUNT(dataTokens);
+dump result;
+
+Result:
+(ar,122)
+(ca,343)
+(cs,14)
+(da,44)
+(de,860)
+(el,9)
+(en,53680)
+(es,33801)
+(eu,17)
+(fi,97)
+(fr,2341)
+(gl,7)
+(he,2)
+(hu,20)
+(id,5705)
+(it,1408)
+(ja,376)
+(ko,9)
+(nl,1183)
+(no,22)
+(pl,116)
+(pt,1684)
+(ru,398)
+(sv,233)
+(th,106)
+(tr,400)
+(uk,5)
+(msa,2)
+(lolc,1)
+(xx-lc,1)
+(zh-cn,3)
+(zh-tw,4)
+(Wed Apr 10 13:44:05 CDT 2013,1)
+(Wed Apr 10 13:45:54 CDT 2013,1)
+(Wed Apr 10 13:46:59 CDT 2013,1)
+(Wed Apr 10 13:54:33 CDT 2013,1)
+(Wed Apr 10 14:11:38 CDT 2013,1)
+(Wed Apr 10 14:12:25 CDT 2013,1)
+(Wed Apr 10 14:16:07 CDT 2013,1)
+(Wed Apr 10 14:16:23 CDT 2013,1)
+(Wed Apr 10 14:34:46 CDT 2013,1)
+(Wed Apr 10 14:37:23 CDT 2013,1)
+(Wed Apr 10 14:40:48 CDT 2013,1)
+(Wed Apr 10 14:42:56 CDT 2013,1)
+(Wed Apr 10 14:49:55 CDT 2013,1)
+(Wed Apr 10 14:53:47 CDT 2013,1)
+(Wed Apr 10 14:55:22 CDT 2013,1)
+(Wed Apr 10 14:59:30 CDT 2013,1)
+(Wed Apr 10 15:01:30 CDT 2013,1)
+(Wed Apr 10 15:07:31 CDT 2013,1)
+(Wed Apr 10 15:10:02 CDT 2013,1)
+(Wed Apr 10 15:13:15 CDT 2013,1)
+(Wed Apr 10 15:17:11 CDT 2013,1)
+(Wed Apr 10 15:21:17 CDT 2013,1)
+(Wed Apr 10 15:29:24 CDT 2013,1)
+(Wed Apr 10 15:30:18 CDT 2013,1)
+(Wed Apr 10 15:30:23 CDT 2013,1)
+(Wed Apr 10 15:39:29 CDT 2013,1)
+(Wed Apr 10 15:40:24 CDT 2013,1)
+(Wed Apr 10 15:41:13 CDT 2013,1)
+(Wed Apr 10 15:44:51 CDT 2013,1)
+(Wed Apr 10 15:46:28 CDT 2013,1)
+(Wed Apr 10 15:46:31 CDT 2013,1)
+(Wed Apr 10 15:48:38 CDT 2013,1)
+(Wed Apr 10 15:48:48 CDT 2013,1)
+(,0)
+
+
+7. The language(s) that has the most number of tweets
+dataIn = LOAD '/home/cloudera/Downloads/TweetsAll.txt' AS (line:chararray) ;
+dataTokens = foreach dataIn generate flatten( STRSPLIT(line,'[|-|]')) AS (userName:chararray, hipen1:chararray, lang:chararray, hipen2:chararray, loc:chararray, hipen3:chararray, date:chararray, hipen4:chararray, textContent:chararray, hipen5:chararray, nulltermination:chararray);
+dataCount = Group dataTokens by lang;
+result = foreach dataCount generate group as lang, COUNT(dataTokens) as cnt;
+sortedResult = Order result by cnt DESC;
+dump sortedResult;
+
+Result:
+(en,53680)
+(es,33801)
+(id,5705)
+(fr,2341)
+(pt,1684)
+(it,1408)
+(nl,1183)
+(de,860)
+(tr,400)
+(ru,398)
+(ja,376)
+(ca,343)
+(sv,233)
+(ar,122)
+(pl,116)
+(th,106)
+(fi,97)
+(da,44)
+(no,22)
+(hu,20)
+(eu,17)
+(cs,14)
+(ko,9)
+(el,9)
+(gl,7)
+(uk,5)
+(zh-tw,4)
+(zh-cn,3)
+(msa,2)
+(he,2)
+(Wed Apr 10 13:44:05 CDT 2013,1)
+(Wed Apr 10 15:48:48 CDT 2013,1)
+(Wed Apr 10 15:48:38 CDT 2013,1)
+(Wed Apr 10 15:46:31 CDT 2013,1)
+(Wed Apr 10 15:46:28 CDT 2013,1)
+(Wed Apr 10 15:44:51 CDT 2013,1)
+(Wed Apr 10 15:41:13 CDT 2013,1)
+(Wed Apr 10 15:40:24 CDT 2013,1)
+(Wed Apr 10 15:39:29 CDT 2013,1)
+(Wed Apr 10 15:30:23 CDT 2013,1)
+(Wed Apr 10 15:30:18 CDT 2013,1)
+(Wed Apr 10 15:29:24 CDT 2013,1)
+(Wed Apr 10 15:21:17 CDT 2013,1)
+(Wed Apr 10 15:17:11 CDT 2013,1)
+(Wed Apr 10 15:13:15 CDT 2013,1)
+(Wed Apr 10 15:10:02 CDT 2013,1)
+(Wed Apr 10 15:07:31 CDT 2013,1)
+(Wed Apr 10 15:01:30 CDT 2013,1)
+(Wed Apr 10 14:59:30 CDT 2013,1)
+(Wed Apr 10 14:55:22 CDT 2013,1)
+(Wed Apr 10 14:53:47 CDT 2013,1)
+(Wed Apr 10 14:49:55 CDT 2013,1)
+(Wed Apr 10 14:42:56 CDT 2013,1)
+(Wed Apr 10 14:40:48 CDT 2013,1)
+(Wed Apr 10 14:37:23 CDT 2013,1)
+(Wed Apr 10 14:34:46 CDT 2013,1)
+(Wed Apr 10 14:16:23 CDT 2013,1)
+(Wed Apr 10 14:16:07 CDT 2013,1)
+(Wed Apr 10 14:12:25 CDT 2013,1)
+(Wed Apr 10 14:11:38 CDT 2013,1)
+(Wed Apr 10 13:54:33 CDT 2013,1)
+(Wed Apr 10 13:46:59 CDT 2013,1)
+(Wed Apr 10 13:45:54 CDT 2013,1)
+(xx-lc,1)
+(lolc,1)
+(,0)
